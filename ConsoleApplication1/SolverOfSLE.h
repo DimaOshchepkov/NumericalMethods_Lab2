@@ -10,7 +10,7 @@ private:
 
 public:
 	SolverOfSLE(SolvingMethod* solvingMethod,
-			std::initializer_list<std::initializer_list<double>> matrix) :
+			std::initializer_list<std::initializer_list<double>> matrix = {}) :
 			solvingMethod(solvingMethod)
 	{
 		for (auto row : matrix)

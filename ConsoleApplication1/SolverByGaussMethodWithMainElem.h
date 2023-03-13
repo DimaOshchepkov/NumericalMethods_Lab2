@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <typeinfo>
 #include "SolvingMethod.h"
 #include "ForwardGaussMethod.h"
 #include "ReverseGaussMethod.h"
@@ -11,13 +12,17 @@ class SolverByGaussMethodWithMainElem : public SolvingMethod
 public:
 	std::vector<double> GetSolve(std::vector<std::vector<double>> matrix) override
 	{
-		if (GetDeterminant(matrix) == 0)
+		if (GetDeterminant(matrix) != 0)
+		{
+			forwardGaussMethod.Apply(matrix);
+			return reverseGaussMethod.Apply(matrix);
+		}
+		else
 		{
 			std::cout << "Determinate equval zero\n";
 			return {};
 		}
-		forwardGaussMethod.Apply(matrix);
-		return reverseGaussMethod.Apply(matrix);
+
 	}
 
 	double GetDeterminant(std::vector<std::vector<double>> matrix) override
@@ -28,7 +33,9 @@ public:
 		for (int i = 0; i < matrix.size(); i++)
 			determinant *= matrix[i][i];
 
-		return determinant;
+		if (typeid(determinant).name() == "double")
+			return determinant;
+		else return 0;
 	}
 private:
 

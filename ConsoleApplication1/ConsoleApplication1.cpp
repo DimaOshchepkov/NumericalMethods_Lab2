@@ -13,43 +13,56 @@
 template <typename T>
 std::ostream& operator<< (std::ostream& os, const std::vector<T>& vec)
 {
+    if (vec.empty())
+        os << "{}";
     for (auto el : vec)
         os << el << ' ';
     return os << '\n';
 }
 
+std::vector<std::vector<double>> ReadMatrix()
+{
+    try
+    {
+        std::cout << "Input size\n";
+        int size = 0;
+        std::cin >> size;
+
+        std::vector<std::vector<double>> matrix(size, std::vector<double>(size + 1));
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size + 1; j++)
+                std::cin >> matrix[i][j];
+
+        return matrix;
+    }
+    catch(...)
+    {
+        std::cerr << "Input error\n";
+        return {};
+    }
+}
+
 int main()
 {
-    SolverOfSLE* solver = new SolverOfSLE(new SolvingByGaussMethod(),
-        {
-            {4, -5, 2, 1},
-            {3, -3, 2, 2},
-            {2, -3, 1, 3},
-        }
-    );
+    std::cout << "Input matrix\n";
+    auto matrix = ReadMatrix();
+
+    SolverOfSLE* solver = new SolverOfSLE(new SolvingByGaussMethod());
+    solver->SetMatrix(matrix);
     std::cout << solver->GetDeterminant() << '\n';
     std::cout << solver->GetSolve() << '\n';
 
     std::cout << "------------------------------------\n";
 
     solver->SetStrategy(new SolverByGaussMethodWithMainElem());
-    solver->SetMatrix({
-            {4, -5, 2, 1},
-            {3, -3, 2, 2},
-            {2, -3, 1, 3},
-        });
 
     std::cout << solver->GetDeterminant() << '\n';
     std::cout << solver->GetSolve() << '\n';
 
     std::cout << "------------------------------------\n";
 
-    GetterOfReverseMatrix* getterReverseMatrix = new GetterOfReverseMatrix(new SolvingByMethodOfElementaryTransformations(),
-        {
-            {4, -5, 2, 1},
-            {3, -3, 2, 2},
-            {2, -3, 1, 3},
-        });
+    GetterOfReverseMatrix* getterReverseMatrix = new GetterOfReverseMatrix(new SolvingByMethodOfElementaryTransformations());
+    getterReverseMatrix->SetMatrix(matrix);
     std::cout << getterReverseMatrix->GetReverseMatrix();
 }
 
