@@ -41,8 +41,22 @@ public:
         }
         else
         {
-            std::cout << "Determinant eqval zero\n";
-            return {};
+            transfmationAccordingToPrincipalElements.Apply(matrix);
+            forwardGaussMethod.Apply(matrix);
+            for (int i = matrix.size() - 1; i >= 0; i--)
+                if (matrix[i][matrix.size()] != 0 &&
+                    std::all_of(matrix[i].begin(), std::next(matrix[i].begin(), matrix.size() - 1),
+                        [](const auto& el)
+                        {
+                            return el == 0;
+                        }))
+                {
+                    std::cout << "No solution" << std::endl;
+                    return {};
+                }
+
+                std::cout << "Endlessly solution\n";
+                return {};
         }
         
     }
@@ -60,9 +74,10 @@ private:
         for (int i = 0; i < matrix.size(); i++)
             determinant *= matrix[i][i];
 
-        if (typeid(determinant).name() == "double")
+        if (std::isnan(determinant))
+            return 0;
+        else
             return determinant;
-        else return 0;
     }
     TransfmationAccordingToPrincipalElements transfmationAccordingToPrincipalElements;
     ForwardGaussMethod forwardGaussMethod;

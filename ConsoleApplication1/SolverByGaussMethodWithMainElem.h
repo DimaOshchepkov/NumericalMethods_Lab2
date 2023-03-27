@@ -12,30 +12,42 @@ class SolverByGaussMethodWithMainElem : public SolvingMethod
 public:
 	std::vector<double> GetSolve(std::vector<std::vector<double>> matrix) override
 	{
+		transfmationAccordingToPrincipalElements.Apply(matrix);
+		forwardGaussMethod.Apply(matrix);
 		if (GetDeterminant(matrix) != 0)
-		{
-			forwardGaussMethod.Apply(matrix);
 			return reverseGaussMethod.Apply(matrix);
-		}
 		else
 		{
-			std::cout << "Determinate equval zero\n";
-			return {};
-		}
+			for (int i = matrix.size() - 1; i >= 0; i--)
+				if (matrix[i][matrix.size()] != 0 &&
+					std::all_of(matrix[i].begin(), std::next(matrix[i].begin(), matrix.size() - 1),
+						[](const auto& el)
+						{
+							return el == 0;
+						}))
+				{
+					std::cout << "No solution" << std::endl;
+					return {};
+				}
 
+				std::cout << "Endlessly solution\n";
+				return {};
+		}
 	}
+
+
 
 	double GetDeterminant(std::vector<std::vector<double>> matrix) override
 	{
 		double determinant = 1;
-		transfmationAccordingToPrincipalElements.Apply(matrix);
 		forwardGaussMethod.Apply(matrix);
 		for (int i = 0; i < matrix.size(); i++)
 			determinant *= matrix[i][i];
 
-		if (typeid(determinant).name() == "double")
+		if (std::isnan(determinant))
+			return 0;
+		else
 			return determinant;
-		else return 0;
 	}
 private:
 

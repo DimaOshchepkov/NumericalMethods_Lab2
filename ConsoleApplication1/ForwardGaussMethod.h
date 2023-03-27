@@ -22,6 +22,7 @@ private:
 	void RowXMinusYWithCoef(int x, int y, double coef,
 			std::vector<std::vector<double>>& matrix)
 	{
+
 		for (int i = 0; i < matrix.back().size(); i++)
 			matrix[x][i] -= coef * matrix[y][i];
 	}
